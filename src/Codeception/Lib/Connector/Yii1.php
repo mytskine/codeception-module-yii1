@@ -1,6 +1,7 @@
 <?php
 namespace Codeception\Lib\Connector;
 
+use Codeception\Exception\ConfigurationException;
 use Codeception\Lib\Connector\Yii1\HttpRequest;
 use Codeception\Lib\Connector\Yii1\Logger;
 use Codeception\Util\Stub;
@@ -22,6 +23,11 @@ class Yii1 extends AbstractBrowser
      * @var string application config file
      */
     public $configFile = '';
+
+    /**
+     * @var string
+     */
+    public $userIdentityClass = '';
 
     /**
      * @param Request $request
@@ -176,5 +182,42 @@ class Yii1 extends AbstractBrowser
     {
         parent::restart();
         $this->resetApplication();
+    }
+
+    public function findAndLoginUser(string $username, string $password)
+    {
+        $app = Yii::app();
+        if ($app === null) {
+            $this->startApplication();
+            $app = Yii::app();
+        }
+        if (empty($this->userIdentityClass)) {
+            throw new ConfigurationException("Configuration of 'userIdentityClass' is missing");
+        }
+        $c = $this->userIdentityClass;
+        $userIdentity = new $c($username, $password);
+        if (!($userIdentity instanceof \CBaseUserIdentity)) {
+            throw new ConfigurationException("Configuration of 'userIdentityClass' doest not derive from CBaseUserIdentity");
+        }
+        $userIdentity->authenticate();
+
+        $session = $app->getComponent('session');
+        if ($session) {
+            $app->setComponent('session', Stub::make('CHttpSession', ['regenerateID' => false]));
+        }
+        $app->user->login($userIdentity);
+    }
+
+    public function logout()
+    {
+        $app = Yii::app();
+        if ($app === null) {
+            return;
+        }
+        $session = $app->getComponent('session');
+        if ($session) {
+            $app->setComponent('session', Stub::make('CHttpSession', ['regenerateID' => false]));
+        }
+        $app->user->logout();
     }
 }

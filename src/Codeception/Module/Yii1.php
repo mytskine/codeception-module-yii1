@@ -23,6 +23,8 @@ use Yii;
  *    The file will not be loaded (e.g. "index-test.php" may not exist).
  * * `entryScript` *required* - path to the front script (e.g. : src/www/index-php.php).
  *    Yii derives some internal path from this.
+ * * `userIdentityClass` - Fully qualified class name to the authenticating class
+ *    deriving from CBaseUserIdentity.
  *
  *
  * You can use this module by setting params in your `functional.suite.yml`:
@@ -48,6 +50,7 @@ class Yii1 extends Framework implements PartedModule
         'entryScript' => '',
         'entryUrl' => 'http://localhost/index-test.php',
         'transaction' => true,
+        'userIdentityClass' => '',
     ];
 
     /**
@@ -58,6 +61,34 @@ class Yii1 extends Framework implements PartedModule
     public function _parts()
     {
         return ['init'];
+    }
+
+    /**
+     * Authenticates a user.
+     *
+     * This is much faster than submitting a login form.
+     * The `userIdentityClass` field must exist in the configuration.
+     *
+     * ```php
+     * <?php
+     * $I->amLoggedInAs("Bibi", "guess that");
+     *
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function amLoggedInAs(string $username, string $password = "mdp")
+    {
+        try {
+            $this->client->findAndLoginUser($username, $password);
+        } catch (ConfigurationException $e) {
+            throw new ModuleException($this, $e->getMessage());
+        } catch (\RuntimeException $e) {
+            throw new ModuleException($this, $e->getMessage());
+        }
+    }
+
+    public function logout()
+    {
+        $this->client->logout();
     }
 
     /**
