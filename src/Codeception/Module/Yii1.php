@@ -40,7 +40,7 @@ use Yii;
  *
  * @property \Codeception\Lib\Connector\Yii1 $client
  */
-class Yii1 extends Framework implements PartedModule
+class Yii1 extends Framework
 {
     use ModuleHooksTrait, TestHooksTrait;
 
@@ -49,6 +49,7 @@ class Yii1 extends Framework implements PartedModule
         'configFile' => '',
         'entryScript' => '',
         'entryUrl' => 'http://localhost/index-test.php',
+        'resetComponents' => [],
         'transaction' => true,
         'userIdentityClass' => '',
     ];

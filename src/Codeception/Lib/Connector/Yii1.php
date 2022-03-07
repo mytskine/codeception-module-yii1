@@ -25,6 +25,11 @@ class Yii1 extends AbstractBrowser
     public $configFile = '';
 
     /**
+     * @var string[] Application components to reset before each request
+     */
+    public $resetComponents = [];
+
+    /**
      * @var string
      */
     public $userIdentityClass = '';
@@ -123,6 +128,14 @@ class Yii1 extends AbstractBrowser
         if ($app->hasComponent('log')) {
             foreach ($app->getComponent('log')->routes as $route) {
                 $route->enabled = false;
+            }
+        }
+
+        // Reset some components
+        foreach ($this->resetComponents as $componentName) {
+            // Only recreate if it has actually been instantiated.
+            if ($app->getComponent($componentName, false) !== null) {
+                $app->setComponent($componentName, null);
             }
         }
     }
