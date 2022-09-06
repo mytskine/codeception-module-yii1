@@ -15,7 +15,7 @@ class HttpRequest extends \CHttpRequest
 		$this->_headers[$name] = $value;
 	}
 
-	public function getHeader($name, $default = null)
+	public function getHeader($name, $default = '')
 	{
 		return $this->_headers[$name] ?? $default;
 	}
