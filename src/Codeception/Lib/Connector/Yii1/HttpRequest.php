@@ -10,6 +10,8 @@ class HttpRequest extends \CHttpRequest
 
 	protected $_cookies;
 
+    protected $statusCode = 200;
+
 	public function setHeader($name, $value)
 	{
 		$this->_headers[$name] = $value;
@@ -33,9 +35,15 @@ class HttpRequest extends \CHttpRequest
 		return $this->_cookies;
 	}
 
-	public function redirect($url, $terminate = true, $statusCode = 302)
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    public function redirect($url, $terminate = true, $statusCode = 302)
 	{
 		$this->setHeader('Location', $url);
+        $this->statusCode = $statusCode;
 		if ($terminate) {
 			Yii::app()->end(0, false);
 		}

@@ -48,27 +48,19 @@ class Yii1 extends AbstractBrowser
         $this->beforeRequest();
         $app = Yii::app();
 
-		if ($app->hasEventHandler('onBeginRequest')) {
-			$app->onBeginRequest(new \CEvent($app));
+        if ($app->hasEventHandler('onBeginRequest')) {
+            $app->onBeginRequest(new \CEvent($app));
         }
         $yiiRequest = $app->getRequest();
         $route = $app->getUrlManager()->parseUrl($yiiRequest);
-		$app->runController($route);
-		if ($app->hasEventHandler('onEndRequest')) {
-			$app->onEndRequest(new \CEvent($app));
+        $app->runController($route);
+        if ($app->hasEventHandler('onEndRequest')) {
+            $app->onEndRequest(new \CEvent($app));
         }
 
         $content = ob_get_clean();
 
-        $headers = $yiiRequest->getAllHeaders();
-        $statusCode = 200;
-        foreach ($headers as $header => $val) {
-            if ($header == 'Location') {
-                $statusCode = 302;
-            }
-        }
-
-        $response = new Response($content, $statusCode, $headers);
+        $response = new Response($content, $yiiRequest->getStatusCode(), $yiiRequest->getAllHeaders());
 
         codecept_debug('Request done, got a response.');
         return $response;
@@ -156,7 +148,7 @@ class Yii1 extends AbstractBrowser
             // disconnect from the main DB
             $db = $app->getComponent('db', false);
             if ($db !== null) {
-                // Remove a hidden which indices hard to debug side-effects
+                // Remove a hidden global state which induces hard to debug side-effects
                 \CActiveRecord::$db = null;
                 // cleanup metadata cache
                 $property = new \ReflectionProperty('CActiveRecord', '_md');
