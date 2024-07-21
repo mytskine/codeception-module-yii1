@@ -7,10 +7,7 @@ use Yii;
 
 trait TransactionTrait
 {
-    /**
-     * @var ?TransactionWrapper
-     */
-    protected $transactionWrapper;
+    protected $transaction;
 
     protected function startTransaction(): void
     {
@@ -22,16 +19,16 @@ trait TransactionTrait
         if ($db === null) {
             return;
         }
-        $this->transactionWrapper = new TransactionWrapper($db);
-        $this->transactionWrapper->start();
+        $this->transaction = $db->beginTransaction();
     }
 
     protected function rollbackTransaction(): void
     {
-        if ($this->transactionWrapper === null) {
+        if ($this->transaction === null) {
+            codecept_debug('Rollback issued while no transaction was active.');
             return;
         }
-        $this->transactionWrapper->rollback();
+        $this->transaction->rollback();
         $this->transactionWrapper = null;
     }
 }
