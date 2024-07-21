@@ -27,7 +27,7 @@ trait ModuleHooksTrait
         $_SERVER = $this->getServerGlobal();
     }
 
-    protected function validateConfig()
+    protected function validateConfig(): void
     {
         parent::validateConfig();
 

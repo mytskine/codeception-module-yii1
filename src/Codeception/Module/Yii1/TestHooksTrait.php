@@ -19,11 +19,6 @@ trait TestHooksTrait
 {
     use TransactionTrait;
 
-    /**
-     * @var \Codeception\Lib\Connector\Yii1
-     */
-    public $client;
-
     abstract protected function getModuleConfig(string $name = '');
     abstract protected function getServerGlobal();
 

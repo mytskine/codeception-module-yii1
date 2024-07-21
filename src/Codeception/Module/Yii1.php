@@ -44,7 +44,7 @@ class Yii1 extends Framework
 {
     use ModuleHooksTrait, TestHooksTrait;
 
-    protected $config = [
+    protected array $config = [
         'applicationClass' => '\\CWebApplication',
         'configFile' => '',
         'entryScript' => '',
@@ -57,7 +57,7 @@ class Yii1 extends Framework
     /**
      * @var array
      */
-    protected $requiredFields = ['configFile'];
+    protected array $requiredFields = ['configFile'];
 
     public function _parts()
     {
@@ -97,7 +97,7 @@ class Yii1 extends Framework
      *
      * @return array
      */
-    public function getInternalDomains()
+    public function getInternalDomains(): array
     {
         if (Yii::app() === null) {
             throw new \Exception("The Yii app must be initialized.");

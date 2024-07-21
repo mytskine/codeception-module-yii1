@@ -4,7 +4,7 @@ namespace Codeception\Lib\Connector;
 use Codeception\Exception\ConfigurationException;
 use Codeception\Lib\Connector\Yii1\HttpRequest;
 use Codeception\Lib\Connector\Yii1\Logger;
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\BrowserKit\Request;
 use Symfony\Component\BrowserKit\Response;
@@ -38,7 +38,7 @@ class Yii1 extends AbstractBrowser
      * @param Request $request
      * @return Response
      */
-    public function doRequest($request)
+    public function doRequest(object $request): object
     {
         codecept_debug('Request starts...');
         $this->fillSuperglobals($request);
@@ -68,7 +68,6 @@ class Yii1 extends AbstractBrowser
 
     private function fillSuperglobals(Request $request)
     {
-        $this->headers = [];
         $_COOKIE = $request->getCookies();
         $_SERVER = $request->getServer();
         $_FILES = $this->remapFiles($request->getFiles());
@@ -183,7 +182,7 @@ class Yii1 extends AbstractBrowser
         Yii::setLogger(new Logger());
     }
 
-    public function restart()
+    public function restart(): void
     {
         parent::restart();
         $this->resetApplication();
